@@ -24,6 +24,8 @@
 
 //temp include
 #include"monitorwidget.h"
+#include"senderwidget.h"
+#include"utilitywidget.h"
 
 int main(int argc, char *argv[])
 {
@@ -34,7 +36,7 @@ int main(int argc, char *argv[])
      app.setOrganizationName("Mohamed-Hussein");
      app.setApplicationVersion("1.0.0");
 
-MonitorWidget m;
+UtilityWidget m;
 m.show();
 
 
