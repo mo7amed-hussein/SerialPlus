@@ -29,6 +29,7 @@ FileSender::FileSender(QWidget *parent) : DataSender(parent)
      sendBtnLayout->addWidget(sendBtn);
      //sendBtnLayout->addStretch();
      sendBtnLayout->addWidget(cancelBtn);
+     sendBtnLayout->addStretch();
      //sendBtnLayout->addStretch();
 
 
@@ -88,5 +89,10 @@ FileSender::FileSender(QWidget *parent) : DataSender(parent)
     //mainLayout->addWidget(radioGroup,2,2);
 
 
+
+}
+
+void FileSender::send()
+{
 
 }

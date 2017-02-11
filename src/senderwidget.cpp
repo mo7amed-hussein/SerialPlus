@@ -18,4 +18,11 @@ SenderWidget::SenderWidget(QWidget *parent) : QWidget(parent)
     mainLayout->setContentsMargins(WIDGETS_LEFT_MARGIN,WIDGETS_TOP_MARGIN,0,0);
     mainLayout->addWidget(senderTabs);
 
+    connect(normal,&NormalSender::sendDataSig,this,&SenderWidget::sendDataSlot);
+    connect(terminal,&TerminalSender::sendDataSig,this,&SenderWidget::sendDataSlot);
+
+}
+void SenderWidget::sendDataSlot(QString data)
+{
+    emit sendDataSig(data);
 }

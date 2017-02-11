@@ -2,6 +2,7 @@
 #define NORMALSENDER_H
 
 #include <QWidget>
+#include<QLineEdit>
 #include"datasender.h"
 class NormalSender : public DataSender
 {
@@ -12,6 +13,9 @@ public:
 signals:
 
 public slots:
+     virtual void send();
+ private:
+ QLineEdit *dataTyper;
 };
 
 #endif // NORMALSENDER_H

@@ -6,12 +6,15 @@
 #include<QHBoxLayout>
 TerminalSender::TerminalSender(QWidget *parent) : DataSender(parent)
 {
-    QTextEdit *term=new QTextEdit(this);
+    TerminalEdit *term=new TerminalEdit(this);
     QGridLayout *mainLayout=new QGridLayout(this);
-    term->setAutoFillBackground(true);
-    term->setBackgroundRole(QPalette::Highlight);
-    term->setTextBackgroundColor(Qt::green);
+   // term->setAutoFillBackground(true);
+   // term->setBackgroundRole(QPalette::Highlight);
+   // term->setTextBackgroundColor(Qt::black);
+
     term->setPlaceholderText(tr("Type to send"));
+
+    connect(term,&TerminalEdit::newCommand,this,&TerminalSender::sendTerm);
     QGroupBox *radioGroup=new QGroupBox(tr("Append sent data"));
 
     QRadioButton *cr=new QRadioButton(tr("CR"));
@@ -32,4 +35,12 @@ TerminalSender::TerminalSender(QWidget *parent) : DataSender(parent)
     mainLayout->addWidget(radioGroup);
     mainLayout->addWidget(term);
 
+}
+void TerminalSender::send()
+{
+
+}
+void TerminalSender::sendTerm(QString d)
+{
+    emit sendDataSig(d);
 }

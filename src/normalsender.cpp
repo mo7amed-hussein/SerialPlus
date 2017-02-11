@@ -15,9 +15,10 @@ NormalSender::NormalSender(QWidget *parent) : DataSender(parent)
 {
     QLabel *dataLabel=new QLabel(tr("Data:"));
     QLabel *historyLabel=new QLabel(tr("Data\nHistory:"));
-    QLineEdit *dataTyper=new QLineEdit;
+    dataTyper=new QLineEdit;
     dataTyper->setPlaceholderText(tr("type to send"));
     QPushButton *sendBtn=new QPushButton(tr("Send"),this);
+    connect(sendBtn,&QPushButton::clicked,this,&NormalSender::send);
 
     QListWidget *historyList=new QListWidget;
 
@@ -64,4 +65,8 @@ NormalSender::NormalSender(QWidget *parent) : DataSender(parent)
 
 
 
+}
+void NormalSender::send()
+{
+    emit sendDataSig(dataTyper->text());
 }

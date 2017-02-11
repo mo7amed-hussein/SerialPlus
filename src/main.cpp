@@ -26,7 +26,7 @@
 #include"monitorwidget.h"
 #include"senderwidget.h"
 #include"utilitywidget.h"
-
+#include"mainwindow.h"
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
@@ -36,8 +36,8 @@ int main(int argc, char *argv[])
      app.setOrganizationName("Mohamed-Hussein");
      app.setApplicationVersion("1.0.0");
 
-UtilityWidget m;
-m.show();
+    MainWindow m;
+    m.show();
 
 
     return app.exec();

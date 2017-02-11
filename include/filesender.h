@@ -12,6 +12,7 @@ public:
 signals:
 
 public slots:
+    virtual void send();
 };
 
 #endif // FILESENDER_H

@@ -62,7 +62,7 @@ ConfigWidget::ConfigWidget(QWidget *parent) : QWidget(parent)
     parityList->addItem("Mark");
     parityList->addItem("Space");
 
-    QLabel *flowLabel=new QLabel(tr("flow control :"));
+    QLabel *flowLabel=new QLabel(tr("Flow Control :"));
     QComboBox *flowList=new QComboBox;
 
     flowList->addItem("None");
@@ -82,7 +82,7 @@ ConfigWidget::ConfigWidget(QWidget *parent) : QWidget(parent)
     mainLayout->addWidget(parityList);
     mainLayout->addWidget(flowLabel);
     mainLayout->addWidget(flowList);
-
+    mainLayout->addStretch();
 
 
 }

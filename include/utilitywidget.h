@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include"configwidget.h"
+#include"searchwidget.h"
 class UtilityWidget : public QWidget
 {
     Q_OBJECT
@@ -12,6 +13,12 @@ public:
 signals:
 
 public slots:
+    void showConfig();
+    void showSearch();
+ private:
+    ConfigWidget *configWidget;
+
+    SearchWidget *searchWidget;
 };
 
 #endif // UTILITYWIDGET_H

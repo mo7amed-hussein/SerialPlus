@@ -10,8 +10,10 @@ public:
     explicit DataSender(QWidget *parent = 0);
 
 signals:
+    emit void sendDataSig(QString data);
 
 public slots:
+    virtual void send()=0;
 };
 
 #endif // DATASENDER_H

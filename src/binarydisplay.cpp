@@ -32,7 +32,7 @@ void BinaryDisplay::print(QDateTime dt,SOURCETYPE type,QString &data)
 QString BinaryDisplay::toBin(QString &data)
 {
     QByteArray arr(data.toLatin1());
-    qDebug()<<arr;
+   // qDebug()<<arr;
     QString bin;
 
     for(int i=0;i<arr.size();i++)
@@ -48,6 +48,6 @@ QString BinaryDisplay::char2bin(unsigned char ch)
 {
     QString bin;
     bin.setNum(ch,2);
-    qDebug()<<"bin >>>"<<bin.trimmed();
+   // qDebug()<<"bin >>>"<<bin.trimmed();
     return bin;
 }

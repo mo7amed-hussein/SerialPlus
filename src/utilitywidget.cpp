@@ -3,7 +3,26 @@
 UtilityWidget::UtilityWidget(QWidget *parent) : QWidget(parent)
 {
 
-    ConfigWidget *config=new ConfigWidget(this);
+   configWidget=new ConfigWidget(this);
+
+   searchWidget=new SearchWidget(this);
+
+    searchWidget->setHidden(true);
+   // config->setHidden(true);
     QVBoxLayout *mainlayout=new QVBoxLayout(this);
-    mainlayout->addWidget(config);
+    mainlayout->addWidget(searchWidget);
+    mainlayout->addWidget(configWidget);
+}
+void UtilityWidget::showConfig()
+{
+ searchWidget->setVisible(false);
+ configWidget->setVisible(true);
+}
+
+void UtilityWidget::showSearch()
+{
+
+    configWidget->setVisible(false);
+    searchWidget->setVisible(true);
+
 }

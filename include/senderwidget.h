@@ -15,7 +15,9 @@ public:
 
 signals:
 
+     void sendDataSig(QString data);
 public slots:
+    void sendDataSlot(QString data);
 private:
 QTabWidget *senderTabs;
 };
