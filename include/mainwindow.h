@@ -5,6 +5,10 @@
 #include"senderwidget.h"
 #include"monitorwidget.h"
 #include"utilitywidget.h"
+#include"configdialog.h"
+#include"configdialog.h"
+#include"aboutdialog.h"
+
 #include<QDockWidget>
 
 class MainWindow : public QMainWindow
@@ -17,6 +21,7 @@ public:
     void createBars();
     bool startConnection();
     bool stopConnection();
+    void showComconfig();
 signals:
 
 public slots:
@@ -24,9 +29,11 @@ public slots:
     void updateStatusBar();
     void startConSlot();
     void stopConSlot();
+    void aboutApp();
 private:
     UtilityWidget *utilityWidget;
     MonitorWidget *monitorWidget;
+    ConfigDialog * comConfig;
     QString port;
     bool isConnected;
     int baudrate;

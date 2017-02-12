@@ -2,7 +2,7 @@
 #define UTILITYWIDGET_H
 
 #include <QWidget>
-#include"configwidget.h"
+#include"configdialog.h"
 #include"searchwidget.h"
 class UtilityWidget : public QWidget
 {
@@ -16,7 +16,7 @@ public slots:
     void showConfig();
     void showSearch();
  private:
-    ConfigWidget *configWidget;
+    ConfigDialog *configWidget;
 
     SearchWidget *searchWidget;
 };
