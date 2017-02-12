@@ -15,7 +15,7 @@ SenderWidget::SenderWidget(QWidget *parent) : QWidget(parent)
 
     QGridLayout *mainLayout=new QGridLayout(this);
     mainLayout->setSpacing(0);
-    mainLayout->setContentsMargins(WIDGETS_LEFT_MARGIN,WIDGETS_TOP_MARGIN,0,0);
+    mainLayout->setContentsMargins(WIDGETS_LEFT_MARGIN,WIDGETS_TOP_MARGIN,5,0);
     mainLayout->addWidget(senderTabs);
 
     connect(normal,&NormalSender::sendDataSig,this,&SenderWidget::sendDataSlot);

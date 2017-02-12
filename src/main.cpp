@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-     app.setApplicationName("SeialPlus");
+     app.setApplicationName("SerialPlus");
      app.setOrganizationDomain("www.SeialPlus.com");
      app.setOrganizationName("Mohamed-Hussein");
      app.setApplicationVersion("1.0.0");

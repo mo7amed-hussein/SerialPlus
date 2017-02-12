@@ -17,7 +17,7 @@ MonitorWidget::MonitorWidget(QWidget *parent) : QWidget(parent)
 
     QGridLayout *mainLayout=new QGridLayout(this);
     mainLayout->setSpacing(0);
-    mainLayout->setContentsMargins(WIDGETS_LEFT_MARGIN,WIDGETS_TOP_MARGIN,0,0);
+    mainLayout->setContentsMargins(WIDGETS_LEFT_MARGIN,WIDGETS_TOP_MARGIN,5,10);
     mainLayout->addWidget(displayTabs);
 }
 

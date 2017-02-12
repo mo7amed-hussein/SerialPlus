@@ -18,13 +18,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     stopBits=0;
     dataBits=0;
 
-    QVBoxLayout *mainLayout=new QVBoxLayout(this);
-    mainLayout->setSpacing(0);
+    //QVBoxLayout *mainLayout=new QVBoxLayout(this);
+    //mainLayout->setSpacing(0);
 
    monitorWidget=new MonitorWidget(this);
    SenderWidget *sender=new SenderWidget(this);
+    comConfig=new ConfigDialog(this);
 
-   mainLayout->addWidget(monitorWidget);
+   //mainLayout->addWidget(monitorWidget);
    //mainLayout->addWidget(sender);
 
     this->setCentralWidget(monitorWidget);
@@ -42,7 +43,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
    addDockWidget(Qt::RightDockWidgetArea,utilityDock);
    addDockWidget(Qt::BottomDockWidgetArea,senderDock);
 
-   this->resize(700,700);
+  this->resize(800,700);
 
    createToolBar();
    createBars();
@@ -152,7 +153,7 @@ QAction* configAction=new QAction(configIcon,tr("Configuration"),this);
 configAction->setShortcut(QKeySequence::Find);
 configAction->setToolTip(tr("connection Configuration"));
 // config(findAction,&QAction::triggered,this,&MainWindow::find);
-connect(configAction,&QAction::triggered,utilityWidget,&UtilityWidget::showConfig);
+connect(configAction,&QAction::triggered,this,&MainWindow::showComconfig);
 
 connectMenu->addAction(configAction);
 mainTool->addAction(configAction);
@@ -162,7 +163,7 @@ QMenu *helpMenu=menuBar()->addMenu(tr("Help"));
 
     const QIcon aboutIcon=QIcon::fromTheme("document-about",QIcon(":/images/icons/about.png"));
     QAction *aboutAction=new QAction(aboutIcon,tr("about"),this);
-   // connect(aboutAction,&QAction::triggered,this,&MainWindow::about);
+    connect(aboutAction,&QAction::triggered,this,&MainWindow::aboutApp);
     helpMenu->addAction(aboutAction);
     //fileToolBar->addAction(aboutAction);
 
@@ -233,3 +234,14 @@ void MainWindow::stopConSlot()
     }
 
 }
+
+void MainWindow::showComconfig()
+{
+    comConfig->exec();
+}
+ void MainWindow::aboutApp()
+ {
+     AboutDialog f(this);
+     f.exec();
+
+ }

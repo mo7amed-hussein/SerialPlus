@@ -26,6 +26,7 @@ FileSender::FileSender(QWidget *parent) : DataSender(parent)
 
      QHBoxLayout *sendBtnLayout=new QHBoxLayout;
 
+     sendBtnLayout->setContentsMargins(0,5,0,5);
      sendBtnLayout->addWidget(sendBtn);
      //sendBtnLayout->addStretch();
      sendBtnLayout->addWidget(cancelBtn);
@@ -46,7 +47,7 @@ FileSender::FileSender(QWidget *parent) : DataSender(parent)
     sendTypeLayout->addStretch();
     sendTypeLayout->setContentsMargins(0,0,0,0);
     sendTypeGroup->setLayout(sendTypeLayout);
-    sendTypeGroup->setContentsMargins(0,0,0,0);
+   // sendTypeGroup->setContentsMargins(0,0,0,0);
 
 
 
@@ -64,11 +65,11 @@ FileSender::FileSender(QWidget *parent) : DataSender(parent)
     radioLayout->addStretch();
     radioLayout->setContentsMargins(0,0,0,0);
     radioGroup->setLayout(radioLayout);
-    radioGroup->setContentsMargins(0,0,0,0);
+   // radioGroup->setContentsMargins(0,0,0,0);
 
     QVBoxLayout *mainLayout=new QVBoxLayout(this);
     mainLayout->setSpacing(0);
-    mainLayout->setContentsMargins(WIDGETS_LEFT_MARGIN,0,0,0);
+    mainLayout->setContentsMargins(WIDGETS_LEFT_MARGIN,WIDGETS_TOP_MARGIN,0,0);
 
     mainLayout->addLayout(fileLayout);
     mainLayout->addWidget(sendTypeGroup);
