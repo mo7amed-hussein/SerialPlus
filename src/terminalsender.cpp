@@ -4,9 +4,10 @@
 #include<QGroupBox>
 #include<QRadioButton>
 #include<QHBoxLayout>
+#include<QPushButton>
 TerminalSender::TerminalSender(QWidget *parent) : DataSender(parent)
 {
-    TerminalEdit *term=new TerminalEdit(this);
+    term=new TerminalEdit(this);
     QGridLayout *mainLayout=new QGridLayout(this);
    // term->setAutoFillBackground(true);
    // term->setBackgroundRole(QPalette::Highlight);
@@ -21,11 +22,17 @@ TerminalSender::TerminalSender(QWidget *parent) : DataSender(parent)
     QRadioButton *lf=new QRadioButton(tr("LF"));
     QRadioButton *cf=new QRadioButton(tr("CR+LF"));
 
+    QPushButton *clearBtn=new QPushButton(this);
+    const QIcon clearIcon(":/resources/icons/clear.png");
+    clearBtn->setToolTip(tr("clear terminal"));
+    clearBtn->setIcon(clearIcon);
+    connect(clearBtn,&QPushButton::clicked,this,&TerminalSender::clear);
     QHBoxLayout *radioLayout=new QHBoxLayout;
     radioLayout->addWidget(cr);
     radioLayout->addWidget(lf);
     radioLayout->addWidget(cf);
     radioLayout->addStretch();
+    radioLayout->addWidget(clearBtn);
 
     radioGroup->setLayout(radioLayout);
 
@@ -42,5 +49,11 @@ void TerminalSender::send()
 }
 void TerminalSender::sendTerm(QString d)
 {
+    d+='\n';
     emit sendDataSig(d);
+}
+void TerminalSender::clear()
+{
+    term->clear();
+    term->append(">>");
 }

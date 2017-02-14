@@ -6,14 +6,17 @@
 #include<QLineEdit>
 #include<QGridLayout>
 #include<QListWidget>
+#include<QTextStream>
 #include<QGroupBox>
 #include<QRadioButton>
 #include<QCheckBox>
+#include<QFileDialog>
 #include<QProgressBar>
+#include<QDebug>
 FileSender::FileSender(QWidget *parent) : DataSender(parent)
 {
     QLabel *fileLabel=new QLabel(tr("File:"));
-    QLineEdit *fileEdit=new QLineEdit;
+    fileEdit=new QLineEdit;
    // dataTyper->setPlaceholderText(tr("type to send"));
     QPushButton *sendBtn=new QPushButton(tr("Send"),this);
     QPushButton *cancelBtn=new QPushButton(tr("Cancel"),this);
@@ -36,10 +39,12 @@ FileSender::FileSender(QWidget *parent) : DataSender(parent)
 
     QGroupBox *sendTypeGroup=new QGroupBox;
 
-    QRadioButton *allfile=new QRadioButton(tr("Send The Whole File(e.g. hex file) "));
-    QRadioButton *fileData=new QRadioButton(tr("Send Data only (e.g. text file) "));
+    allfile=new QRadioButton(tr("Send The Whole File(e.g. hex file) "));
 
-    QProgressBar *sendBar=new QProgressBar;
+    QRadioButton *fileData=new QRadioButton(tr("Send Data only (e.g. text file) "));
+    fileData->setChecked(true);
+
+    sendBar=new QProgressBar;
     QHBoxLayout *sendTypeLayout=new QHBoxLayout;
     sendTypeLayout->addWidget(allfile);
     sendTypeLayout->addWidget(fileData);
@@ -78,22 +83,55 @@ FileSender::FileSender(QWidget *parent) : DataSender(parent)
     mainLayout->addWidget(sendBar);
     mainLayout->addStretch();
 
-
-   // mainLayout->addLayout(dataLayout,0,0);
-   /* mainLayout->addWidget(fileLabel,0,0);
-    mainLayout->addWidget(fileEdit,0,1);
-    mainLayout->addWidget(fileBtn,0,2);
-    mainLayout->addWidget(sendTypeGroup,1,1);
-    mainLayout->addWidget(radioGroup,2,1);
-    mainLayout->addLayout(sendBtnLayout,3,1);
-    mainLayout->addWidget(sendBar,4,1);*/
-    //mainLayout->addWidget(radioGroup,2,2);
-
-
-
+    connect(fileBtn,&QPushButton::clicked,this,&FileSender::getFile);
+    connect(sendBtn,&QPushButton::clicked,this,&FileSender::sendSlot);
 }
 
 void FileSender::send()
 {
 
 }
+ void FileSender::getFile()
+ {
+     QString filename=QFileDialog::getOpenFileName(this,tr("Select File"),QDir::currentPath(),"Text File(*.txt)");
+         if(filename.isEmpty())
+             return;
+         fileEdit->setText(filename);
+         filePath=filename;
+
+ }
+ void FileSender::sendCommands()
+ {
+    QFile f(filePath);
+    if(f.open(QIODevice::ReadOnly |QIODevice::Text))
+    {
+        while (!f.atEnd()) {
+           QTextStream txt(&f);
+           QString cmd=txt.readLine();
+           emit sendDataSig(cmd);
+
+        }
+        f.close();
+
+    }
+
+ }
+
+ void FileSender::sendData()
+ {
+
+ }
+
+ void FileSender::sendSlot()
+  {
+    if(allfile->isChecked())
+    {
+        sendData();
+        qDebug()<<"data";
+    }
+    else
+    {
+        qDebug()<<"command";
+        sendCommands();
+    }
+  }

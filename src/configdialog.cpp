@@ -7,6 +7,7 @@
 #include<QLineEdit>
 #include<QGridLayout>
 #include<QListWidget>
+#include<QFileDialog>
 #include<QGroupBox>
 #include<QRadioButton>
 #include<QCheckBox>
@@ -19,12 +20,28 @@
 
 ConfigDialog::ConfigDialog(QWidget *parent) : QDialog(parent)
 {
+
+    CurrConSetting=new struct Settings;
+    CurrConSetting->name="";
+    CurrConSetting->baudRate=QSerialPort::Baud9600;
+    CurrConSetting->dataBits=QSerialPort::Data8;
+    CurrConSetting->flowControl=QSerialPort::NoFlowControl;
+    CurrConSetting->flowStr="None";
+    CurrConSetting->parity=QSerialPort::NoParity;
+    CurrConSetting->parityStr="None";
+    CurrConSetting->stopBits=QSerialPort::OneStop;
+    CurrConSetting->isLogged=false;
+    CurrConSetting->logfile="";
+    CurrConSetting->isAppend=false;
+
     QVBoxLayout *mainLayout=new QVBoxLayout(this);
 
     QLabel *portLabel=new QLabel(tr("Communication Port :"));
     portList=new QComboBox;
-    portList->addItem("None");
 
+    connect(portList,&QComboBox::currentTextChanged,this,&ConfigDialog::customClicked);
+
+   // connect(portList,&QComboBox::currentTextChanged,this,&ConfigDialog::checkOpen);
     QLabel *baudLabel=new QLabel(tr("Baud Rate :"));
     baudList=new QComboBox;
 
@@ -84,14 +101,18 @@ ConfigDialog::ConfigDialog(QWidget *parent) : QDialog(parent)
 
     QVBoxLayout *logLayout=new QVBoxLayout;
     QHBoxLayout *fileLayout=new QHBoxLayout;
-    QLineEdit *filePath=new QLineEdit;
+    filePath=new QLineEdit;
     QPushButton *fileBtn=new QPushButton("...",this);
+
+    connect(fileBtn,&QPushButton::clicked,this,&ConfigDialog::getFile);
+
     fileBtn->setMaximumWidth(20);
     fileLayout->addWidget(filePath);
     fileLayout->addWidget(fileBtn);
 
     appendFlag=new QRadioButton(tr("Append data"));
     QRadioButton *overwriteFlag=new QRadioButton(tr("Overwrite data"));
+    overwriteFlag->setChecked(true);
     logLayout->addLayout(fileLayout);
     logLayout->addWidget(overwriteFlag);
     logLayout->addWidget(appendFlag);
@@ -103,6 +124,7 @@ ConfigDialog::ConfigDialog(QWidget *parent) : QDialog(parent)
 
 
     connect(cancelBtn,&QPushButton::clicked,this,&ConfigDialog::close);
+     connect(applyBtn,&QPushButton::clicked,this,&ConfigDialog::apply);
     QHBoxLayout *btnsLayout=new QHBoxLayout;
     btnsLayout->addWidget(cancelBtn);
     btnsLayout->addWidget(applyBtn);
@@ -140,4 +162,67 @@ void ConfigDialog::initConfig()
         portList->addItem(info.portName());
 
     }
+    portList->addItem("custom");
+
+    baudList->setCurrentText("9600");
+    dataList->setCurrentText("8");
+
+}
+void ConfigDialog::checkOpen()
+{
+    QString port("/dev/");
+   // port+=portList->currentText();
+   // qDebug()<<"port is "<<port;
+    port="/dev/pts/1";
+ QSerialPort serial;
+ serial.setPortName(port);
+bool p=serial.open(serial.ReadWrite);
+if(p)
+{
+    qDebug()<<"it is opened";
+}
+else
+{
+ qDebug()<<"it is closed";
+}
+}
+void ConfigDialog::apply()
+{
+    CurrConSetting->name=portList->currentText();
+    CurrConSetting->baudRate=static_cast<QSerialPort::BaudRate>(baudList->currentData().toInt());
+    CurrConSetting->dataBits=static_cast<QSerialPort::DataBits>(dataList->currentData().toInt());
+    CurrConSetting->flowControl=static_cast<QSerialPort::FlowControl>(flowList->currentData().toInt());
+    CurrConSetting->parity=static_cast<QSerialPort::Parity>(parityList->currentData().toInt());
+    CurrConSetting->stopBits=static_cast<QSerialPort::StopBits>(stopList->currentData().toInt());
+    CurrConSetting->parityStr=parityList->currentText();
+    CurrConSetting->flowStr=flowList->currentText();
+    CurrConSetting->isLogged=logFileGroup->isChecked();
+    CurrConSetting->isAppend=appendFlag->isChecked();
+    if(CurrConSetting->logfile.isEmpty() && logFileGroup->isChecked())
+    {
+       getFile();
+    }
+    else
+    {
+        this->close();
+    }
+}
+
+void ConfigDialog::customClicked()
+{
+    QComboBox *list=qobject_cast<QComboBox *>(sender());
+    if(list->currentText()=="custom")
+    {
+        list->setEditable(true);
+        list->setEditText("");
+    }
+}
+
+void ConfigDialog::getFile()
+{
+    QString filename=QFileDialog::getSaveFileName(this,tr("Log file"));
+        if(filename.isEmpty())
+            return;
+        filePath->setText(filename);
+        CurrConSetting->logfile=filename;
 }

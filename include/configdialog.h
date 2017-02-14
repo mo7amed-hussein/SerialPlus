@@ -11,15 +11,35 @@
 #include<QtSerialPort/QSerialPortInfo>
 #include<QtSerialPort/QSerialPort>
 
+struct Settings {
+    QString name;
+    qint32 baudRate;
+    QSerialPort::DataBits dataBits;
+    QSerialPort::Parity parity;
+    QString parityStr;
+    QSerialPort::StopBits stopBits;
+    QSerialPort::FlowControl flowControl;
+    QString flowStr;
+    bool isLogged;
+    QString logfile;
+    bool isAppend;
+};
+
 class ConfigDialog : public QDialog
 {
     Q_OBJECT
 public:
     explicit ConfigDialog(QWidget *parent = 0);
     void initConfig();
+    void apply();
+    void customClicked();
+
+    Settings *CurrConSetting;
 signals:
 
 public slots:
+    void checkOpen();
+    void getFile();
 private:
      QComboBox *portList;
      QComboBox *baudList;
@@ -29,7 +49,9 @@ private:
      QComboBox *flowList;
      QGroupBox *logFileGroup;
      QRadioButton *appendFlag;
-     QString *filePath;
+    // QString *filePath;
+     QLineEdit *filePath;
+     //Settings *CurrConSetting;
 };
 
 #endif // CONFIGWIDGET_H

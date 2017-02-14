@@ -12,11 +12,13 @@ class TerminalSender : public DataSender
 public:
     explicit TerminalSender(QWidget *parent = 0);
     void sendTerm(QString d);
-
+    void clear();
 signals:
 
 public slots:
     virtual void send();
+ private:
+    TerminalEdit *term;
 };
 
 #endif // TERMINALSENDER_H

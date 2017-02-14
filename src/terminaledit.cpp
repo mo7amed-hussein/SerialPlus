@@ -4,6 +4,13 @@
 TerminalEdit::TerminalEdit(QWidget *parent) : QTextEdit(parent)
 {
  this->append(">>");
+    QPalette p=this->palette();
+    p.setColor(QPalette::Base, Qt::darkCyan);
+    this->setPalette(p);
+
+    QFont f=this->font();
+    f.setBold(true);
+    this->setFont(f);
 }
 void TerminalEdit::keyPressEvent(QKeyEvent * e)
 {

@@ -16,7 +16,9 @@ public:
     explicit NormalSender(QWidget *parent = 0);
     QString toHex(QString data);
     QString toAscii(QString data);
-
+    void loadHistory(QString fileName);
+    void saveHistory(QString filename);
+    void loadAutoComp();
 
 signals:
 
@@ -36,6 +38,7 @@ public slots:
  QRegExpValidator *hexValidator;
  QCompleter *comp;
  QListWidget *historyList;
+ QStringList autoCompList;
 };
 
 #endif // NORMALSENDER_H

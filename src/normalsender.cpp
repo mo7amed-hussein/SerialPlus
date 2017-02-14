@@ -3,14 +3,18 @@
 #include<QComboBox>
 #include<QPushButton>
 #include<QLabel>
+#include<QDebug>
 #include<QHBoxLayout>
 #include<QLineEdit>
 #include<QGridLayout>
 #include<QListWidget>
 #include<QGroupBox>
+#include<QFile>
 #include<QRadioButton>
 #include<QCheckBox>
 #include<QCompleter>
+#include <QDomDocument>
+
 NormalSender::NormalSender(QWidget *parent) : DataSender(parent)
 {
     QLabel *dataLabel=new QLabel(tr("Command:"));
@@ -22,13 +26,19 @@ NormalSender::NormalSender(QWidget *parent) : DataSender(parent)
     QPushButton *sendBtn=new QPushButton(tr("Send"),this);
     sendBtn->setShortcut(QKeySequence::InsertParagraphSeparator);
     connect(sendBtn,&QPushButton::clicked,this,&NormalSender::send);
+    connect(dataTyper,&QLineEdit::returnPressed,this,&NormalSender::send);
 
-    QStringList list;
-   list<<"man"<<"ali"<<"good"<<"goafg";
-    comp=new QCompleter(list,this);
+  // list<<"man"<<"ali"<<"good"<<"goafg";
+   loadAutoComp();
+
+   comp=new QCompleter(autoCompList,this);
+   comp->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
+   comp->setCaseSensitivity(Qt::CaseInsensitive);
+
     dataTyper->setCompleter(comp);
     hexValidator=new QRegExpValidator(QRegExp("[0-9A-Fa-f]{0,}"),this);
     historyList=new QListWidget;
+    historyList->setSortingEnabled(true);
 
     QGroupBox *editTypeGroup=new QGroupBox;
 
@@ -85,9 +95,14 @@ void NormalSender::send()
 {
     if(!dataTyper->text().isEmpty())
        {
-        emit sendDataSig(dataTyper->text());
+        QString data=dataTyper->text();
+        if(hex->isChecked())
+        {
+            data=toAscii(dataTyper->text());
+        }
+        emit sendDataSig(data);
 
-        historyList->addItem(dataTyper->text());
+        historyList->addItem(data);
 
         if(del->isChecked())
         {
@@ -110,6 +125,7 @@ void NormalSender::radioToggled()
 if(ascii->isChecked())
 {
     dataTyper->setValidator(0);
+    dataTyper->setCompleter(comp);
     if(!dataTyper->text().isEmpty())
        {
     QString str=toAscii(dataTyper->text());
@@ -126,6 +142,7 @@ else
     dataTyper->setText(str);
     }
     dataTyper->setValidator(hexValidator);
+     dataTyper->setCompleter(0);
 }
 
 }
@@ -138,11 +155,130 @@ return QString(arr.data());
 
 void NormalSender::editCommand(QListWidgetItem * item)
 {
-    dataTyper->setText(item->text());
+    QString data=item->text();
+    if(hex->isChecked())
+    {
+        data=toHex(item->text());
+        qDebug()<<"data is "<<data;
+
+    }
+    dataTyper->setText(data);
 
 }
 
 void NormalSender::sendAgain(QListWidgetItem * item)
 {
+    emit sendDataSig(item->text());
+}
+
+void NormalSender::loadHistory(QString fileName)
+{
+    QFile f(fileName);
+    if(f.open(QIODevice::ReadOnly))
+    {
+        /*while (!f.atEnd()) {
+           // QTextStream txt(&f);
+            historyList->addItem(txt.readLine());
+
+        }*/
+        QByteArray content=f.readAll();
+        QDomDocument doc;
+        QString errormsg;
+        int line,col;
+        if(!doc.setContent(content,&errormsg,&line,&col))
+        {
+            qDebug()<<"error in "<<line <<col;
+            f.close();
+            return;
+        }
+        QDomDocumentType type=doc.doctype();
+     //   qDebug()<<"doc type is "<<type.to;
+
+        QDomElement root=doc.documentElement();
+
+        if(root.hasAttribute("xmlns"))
+        {
+        QDomAttr attr=root.attributeNode("xmlns");
+        }
+
+        QDomNode node=root.firstChild();
+        while (!node.isNull()) {
+            QDomElement elem=node.toElement();
+
+            if(elem.tagName()=="Command")
+            {
+            historyList->addItem(elem.text());
+            }
+            node=node.nextSibling();
+
+        }
+
+        f.close();
+
+    }
 
 }
+
+ void NormalSender::saveHistory(QString filename)
+ {
+    // QString filename=QFileDialog
+      qDebug()<<"start";
+     QDomDocument doc("history");
+     QDomElement root=doc.createElement("Commands");
+     doc.appendChild(root);
+     for(int i=0;i<historyList->count();i++)
+     {
+         qDebug()<<"element";
+         QDomElement child=doc.createElement("Command");
+         root.appendChild(child);
+         QListWidgetItem *item=historyList->item(i);
+         QDomText txt=doc.createTextNode(item->text());
+         child.appendChild(txt);
+     }
+     QString str=doc.toString();
+     qDebug()<<"string "<<str;
+    QFile f(filename);
+    if(f.open(QIODevice::WriteOnly))
+    {
+       f.write(str.toLocal8Bit());
+       f.close();
+    }
+
+ }
+ void NormalSender::loadAutoComp()
+ {
+     QFile f(":/resources/Autocomplete.xml");
+     if(f.open(QIODevice::ReadOnly))
+     {
+         QByteArray content=f.readAll();
+         QDomDocument doc;
+         QString errormsg;
+         int line,col;
+         if(!doc.setContent(content,&errormsg,&line,&col))
+         {
+             qDebug()<<"error in "<<line <<col;
+             f.close();
+             return;
+         }
+         QDomDocumentType type=doc.doctype();
+      //   qDebug()<<"doc type is "<<type.to;
+
+         QDomElement root=doc.documentElement();
+
+         QDomNode node=root.firstChild();
+         while (!node.isNull()) {
+             QDomElement elem=node.toElement();
+
+             if(elem.tagName()=="Command")
+             {
+             autoCompList<<elem.text();
+             }
+             node=node.nextSibling();
+
+         }
+
+         f.close();
+
+     }
+
+ }

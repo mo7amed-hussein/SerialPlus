@@ -24,6 +24,7 @@
 #include<QDialog>
 #include<QWidget>
 
+
 class AboutDialog : public QDialog
 {
     Q_OBJECT
