@@ -56,7 +56,7 @@ signals:
 public slots:
 private:
     QTabWidget *displayTabs;
-    DataDisplay *asciiDisplay;
+    AsciiDisplay *asciiDisplay;
     DataDisplay *hexDisplay;
     DataDisplay *binaryDisplay;
 

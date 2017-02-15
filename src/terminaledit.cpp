@@ -52,7 +52,7 @@ void TerminalEdit::keyPressEvent(QKeyEvent * e)
             emit newCommand(command);
         }
         command.clear();
-        QTextEdit::keyPressEvent(e);
+       // QTextEdit::keyPressEvent(e);
         this->append(">>");
 
     }

@@ -19,6 +19,7 @@
  ***************************************************************************/
 #include "asciidisplay.h"
 #include<QDebug>
+#include<QMessageBox>
 
 AsciiDisplay::AsciiDisplay(QWidget *parent):DataDisplay(parent)
 {
@@ -63,5 +64,37 @@ void AsciiDisplay::printData(QDateTime dt,SOURCETYPE type,QByteArray data)
        this->setTextColor(Qt::red);
     }
     str+=data.data();
+
     this->append(str);
+
+    if(log.isOpen())
+    {
+        str+='\n';
+        QTextStream f(&log);
+        f<<str;
+        //log.write(str.toLocal8Bit());
+        qDebug()<<"write";
+    }
 }
+
+void AsciiDisplay::startLog(QString file, QIODevice::OpenMode mode)
+{
+
+    log.setFileName(file);
+    if(!log.open(mode))
+    {
+        QMessageBox::critical(this,"error",log.errorString());
+
+    }
+}
+
+ void AsciiDisplay::stopLog()
+ {
+     if(log.isOpen())
+     {
+         log.close();
+
+     }
+     isLogged=false;
+ }
+

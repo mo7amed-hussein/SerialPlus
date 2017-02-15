@@ -56,27 +56,7 @@ void MonitorWidget::printData(QDateTime dt, SOURCETYPE type, QByteArray &data)
 asciiDisplay->printData(dt,type,data);
 hexDisplay->printData(dt,type,data);
 binaryDisplay->printData(dt,type,data);
-/*
-if(log.isOpen())
-{
-    QString str;
-    str="< "+dt.date().toString(Qt::ISODate)+ " , "+dt.time().toString(Qt::ISODate)+" > ";
-    if(type==TX)
-    {
-        str+=" [TX] -";
 
-    }
-    else
-    {
-       str+=" [RX] -";
-
-    }
-    str+=data;
-    QTextStream f(&log);
-    f<<str;
-    //log.write(str.toLocal8Bit());
-    qDebug()<<"write";
-}*/
 }
 
 void MonitorWidget::clear()
@@ -89,24 +69,14 @@ void MonitorWidget::clear()
 
 void MonitorWidget::startLog(QString file, QIODevice::OpenMode mode)
 {
-    log.setFileName(file);
-    if(!log.open(mode))
-    {
-        QMessageBox::critical(this,"error",log.errorString());
-
-    }
+    asciiDisplay->startLog(file,mode);
 
 }
 
 void MonitorWidget::stopLog()
 {
+asciiDisplay->stopLog();
 
-    if(log.isOpen())
-    {
-        log.close();
-
-    }
-    isLogged=false;
 }
 
 void MonitorWidget::print()

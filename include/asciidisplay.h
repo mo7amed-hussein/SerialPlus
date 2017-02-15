@@ -20,7 +20,7 @@
 #ifndef ASCIIDISPLAY_H
 #define ASCIIDISPLAY_H
 #include"datadisplay.h"
-
+#include<QFile>
 class AsciiDisplay : public DataDisplay
 {
      Q_OBJECT
@@ -29,6 +29,11 @@ public:
     AsciiDisplay(QWidget *parent = 0);
 
     virtual void printData(QDateTime dt, SOURCETYPE type, QByteArray data);
+    void startLog(QString file, QIODevice::OpenMode mode);
+    void stopLog();
+private:
+    QFile log;
+    bool isLogged;
 };
 
 #endif // ASCIIDISPLAY_H
