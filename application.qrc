@@ -1,0 +1,19 @@
+<RCC>
+    <qresource prefix="/">
+        <file>resources/icons/info.png</file>
+        <file>resources/icons/disconnect.png</file>
+        <file>resources/icons/connect.png</file>
+        <file>resources/icons/settings.png</file>
+        <file>resources/icons/document-open.png</file>
+        <file>resources/icons/document-print.png</file>
+        <file>resources/icons/document-save.png</file>
+        <file>resources/icons/clear.png</file>
+        <file>resources/icons/new.png</file>
+        <file>resources/Autocomplete.xml</file>
+        <file>resources/icons/preferences-system.png</file>
+        <file>resources/icons/seialplus.png</file>
+        <file>resources/icons/serialLogo.jpg</file>
+        <file>resources/icons/zoom-out.png</file>
+        <file>resources/icons/zoom-in.png</file>
+    </qresource>
+</RCC>

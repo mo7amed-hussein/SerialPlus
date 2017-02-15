@@ -1,3 +1,22 @@
+/***************************************************************************
+ *   Copyright (C) 2017 by Mohamed Hussein                                 *
+ *   m.hussein1389@gmail.com                                               *
+     https://github.com/mo7amed-hussein/                                   *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.  *
+ *                                                                         *
+ ***************************************************************************/
 #include "normalsender.h"
 #include"config.h"
 #include<QComboBox>
@@ -28,7 +47,6 @@ NormalSender::NormalSender(QWidget *parent) : DataSender(parent)
     connect(sendBtn,&QPushButton::clicked,this,&NormalSender::send);
     connect(dataTyper,&QLineEdit::returnPressed,this,&NormalSender::send);
 
-  // list<<"man"<<"ali"<<"good"<<"goafg";
    loadAutoComp();
 
    comp=new QCompleter(autoCompList,this);
@@ -60,8 +78,9 @@ NormalSender::NormalSender(QWidget *parent) : DataSender(parent)
 
     QGroupBox *radioGroup=new QGroupBox;
 
-    QRadioButton *cr=new QRadioButton(tr("CR"));
-    QRadioButton *lf=new QRadioButton(tr("LF"));
+    cr=new QRadioButton(tr("CR"));
+    cr->setChecked(true);
+    lf=new QRadioButton(tr("LF"));
     QRadioButton *cf=new QRadioButton(tr("CR+LF"));
 
     QHBoxLayout *radioLayout=new QHBoxLayout;
@@ -76,7 +95,7 @@ NormalSender::NormalSender(QWidget *parent) : DataSender(parent)
     QGridLayout *mainLayout=new QGridLayout(this);
     mainLayout->setSpacing(0);
     mainLayout->setContentsMargins(WIDGETS_LEFT_MARGIN,WIDGETS_TOP_MARGIN,0,0);
-   // mainLayout->addLayout(dataLayout,0,0);
+
     mainLayout->addWidget(dataLabel,0,0);
     mainLayout->addWidget(dataTyper,0,1);
     mainLayout->addWidget(sendBtn,0,2);
@@ -84,25 +103,34 @@ NormalSender::NormalSender(QWidget *parent) : DataSender(parent)
     mainLayout->addWidget(radioGroup,2,1);
     mainLayout->addWidget(historyLabel,3,0);
     mainLayout->addWidget(historyList,3,1);
-    //mainLayout->addWidget(radioGroup,2,2);
-
     connect(historyList,&QListWidget::itemClicked,this,&NormalSender::editCommand);
     connect(historyList,&QListWidget::itemDoubleClicked,this,&NormalSender::sendAgain);
-
-
 }
+
 void NormalSender::send()
 {
     if(!dataTyper->text().isEmpty())
        {
-        QString data=dataTyper->text();
+        QByteArray data(dataTyper->text().toLocal8Bit());
         if(hex->isChecked())
         {
-            data=toAscii(dataTyper->text());
+            data=toAscii(data);
+           //qDebug()<<"line edit data in 8 bits hex again "<<toHex(data).toLocal8Bit();
         }
+        QString append="\r\n";
+        if(cr->isChecked())
+        {
+            append="\r";
+        }
+        else if(lf->isChecked())
+        {
+            append="\n";
+        }
+        QString listItem(data.data());
+        qDebug()<<"item added is "<<listItem;
+        historyList->addItem(listItem);
+        data+=append.toLocal8Bit();
         emit sendDataSig(data);
-
-        historyList->addItem(data);
 
         if(del->isChecked())
         {
@@ -111,16 +139,14 @@ void NormalSender::send()
       }
 }
 
-QString NormalSender::toHex(QString data)
+QByteArray NormalSender::toHex(QByteArray data)
 {
-    QByteArray arr(data.toLocal8Bit());
 
-    return QString(arr.toHex());
+    return data.toHex();
 }
 
 void NormalSender::radioToggled()
 {
-
 
 if(ascii->isChecked())
 {
@@ -128,8 +154,9 @@ if(ascii->isChecked())
     dataTyper->setCompleter(comp);
     if(!dataTyper->text().isEmpty())
        {
-    QString str=toAscii(dataTyper->text());
-    dataTyper->setText(str);
+        qDebug()<<"to ascii as rec "<<dataTyper->text().toLocal8Bit();
+    QString str=toAscii(dataTyper->text().toLocal8Bit()).data();
+    dataTyper->setText(str.toLocal8Bit());
     }
 
 
@@ -138,8 +165,13 @@ else
 {
     if(!dataTyper->text().isEmpty())
     {
-    QString str=toHex(dataTyper->text());
-    dataTyper->setText(str);
+    QString str=toHex(dataTyper->text().toLocal8Bit()).data();
+    QByteArray arr;
+    arr.append(dataTyper->text());
+    qDebug()<<"to hex as array is "<<arr;
+    qDebug()<<"to hex as toggled is "<<dataTyper->text();
+    qDebug()<<"to string "<<toHex(dataTyper->text().toLocal8Bit());
+    dataTyper->setText(str.toLocal8Bit());
     }
     dataTyper->setValidator(hexValidator);
      dataTyper->setCompleter(0);
@@ -147,10 +179,9 @@ else
 
 }
 
-QString NormalSender::toAscii(QString data)
+QByteArray NormalSender::toAscii(QByteArray data)
 {
-QByteArray arr=QByteArray::fromHex(data.toLocal8Bit());
-return QString(arr.data());
+    return QByteArray::fromHex(data);
 }
 
 void NormalSender::editCommand(QListWidgetItem * item)
@@ -158,8 +189,8 @@ void NormalSender::editCommand(QListWidgetItem * item)
     QString data=item->text();
     if(hex->isChecked())
     {
-        data=toHex(item->text());
-        qDebug()<<"data is "<<data;
+      data=toHex(item->text().toLocal8Bit()).data();
+       qDebug()<<"data is "<<data;
 
     }
     dataTyper->setText(data);
@@ -168,7 +199,20 @@ void NormalSender::editCommand(QListWidgetItem * item)
 
 void NormalSender::sendAgain(QListWidgetItem * item)
 {
-    emit sendDataSig(item->text());
+           QString append="\r\n";
+            if(cr->isChecked())
+            {
+                append="\r";
+            }
+            else if(lf->isChecked())
+            {
+                append="\n";
+            }
+            QString d=item->text();
+            d+=append;
+            QByteArray snd(d.toLocal8Bit());
+
+   emit sendDataSig(snd);
 }
 
 void NormalSender::loadHistory(QString fileName)
@@ -176,11 +220,6 @@ void NormalSender::loadHistory(QString fileName)
     QFile f(fileName);
     if(f.open(QIODevice::ReadOnly))
     {
-        /*while (!f.atEnd()) {
-           // QTextStream txt(&f);
-            historyList->addItem(txt.readLine());
-
-        }*/
         QByteArray content=f.readAll();
         QDomDocument doc;
         QString errormsg;
@@ -195,11 +234,6 @@ void NormalSender::loadHistory(QString fileName)
      //   qDebug()<<"doc type is "<<type.to;
 
         QDomElement root=doc.documentElement();
-
-        if(root.hasAttribute("xmlns"))
-        {
-        QDomAttr attr=root.attributeNode("xmlns");
-        }
 
         QDomNode node=root.firstChild();
         while (!node.isNull()) {

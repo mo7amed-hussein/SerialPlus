@@ -6,7 +6,7 @@ SerialPlus has the following features:
 
 -monitor serial communicaion
 -exchange data with serial ports
--log data in file
+-log data in  file
 -handl commands in (ascii,hex)
 -send files(hex/txt) to serial ports
 -search in exchanged data

@@ -1,14 +1,33 @@
+/***************************************************************************
+ *   Copyright (C) 2017 by Mohamed Hussein                                 *
+ *   m.hussein1389@gmail.com                                               *
+     https://github.com/mo7amed-hussein/                                   *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.  *
+ *                                                                         *
+ ***************************************************************************/
 #include "monitorwidget.h"
 #include"config.h"
 #include<QGridLayout>
 #include<QPushButton>
 #include<QMessageBox>
+#include<QPrinter>
+#include<QPrintDialog>
+
 MonitorWidget::MonitorWidget(QWidget *parent) : QWidget(parent)
 {
     displayTabs=new QTabWidget(this);
-
-
-
     asciiDisplay=new AsciiDisplay(this);
     binaryDisplay=new BinaryDisplay(this);
     hexDisplay=new HexDisplay(this);
@@ -19,7 +38,7 @@ MonitorWidget::MonitorWidget(QWidget *parent) : QWidget(parent)
 
     QGridLayout *mainLayout=new QGridLayout(this);
     mainLayout->setSpacing(0);
-    mainLayout->setContentsMargins(WIDGETS_LEFT_MARGIN,WIDGETS_TOP_MARGIN,5,10);
+    mainLayout->setContentsMargins(WIDGETS_LEFT_MARGIN,WIDGETS_TOP_MARGIN,5,0);
     mainLayout->addWidget(displayTabs);
 
     QPushButton *clearBtn=new QPushButton(this);
@@ -30,12 +49,14 @@ MonitorWidget::MonitorWidget(QWidget *parent) : QWidget(parent)
     displayTabs->setCornerWidget(clearBtn,Qt::TopRightCorner);
 }
 
-void MonitorWidget::print(QDateTime dt,SOURCETYPE type,QString &data)
+void MonitorWidget::printData(QDateTime dt, SOURCETYPE type, QByteArray &data)
 {
-asciiDisplay->print(dt,type,data);
-hexDisplay->print(dt,type,data);
-binaryDisplay->print(dt,type,data);
+   qDebug()<<"data is : "<<data<<"size is "<<data.size();
 
+asciiDisplay->printData(dt,type,data);
+hexDisplay->printData(dt,type,data);
+binaryDisplay->printData(dt,type,data);
+/*
 if(log.isOpen())
 {
     QString str;
@@ -55,7 +76,7 @@ if(log.isOpen())
     f<<str;
     //log.write(str.toLocal8Bit());
     qDebug()<<"write";
-}
+}*/
 }
 
 void MonitorWidget::clear()
@@ -64,20 +85,7 @@ void MonitorWidget::clear()
     hexDisplay->clear();
     binaryDisplay->clear();
 }
-bool MonitorWidget::find(QString str,bool wd,bool cs)
-{
-    QTextDocument::FindFlags flags;
-    if(wd)
-    {
-        flags |=QTextDocument::FindWholeWords;
-    }
-    if(cs)
-    {
-        flags |=QTextDocument::FindCaseSensitively;
-    }
-    DataDisplay * currentDisp=(DataDisplay *)displayTabs->currentWidget();
-    return (currentDisp->find(str,flags));
-}
+
 
 void MonitorWidget::startLog(QString file, QIODevice::OpenMode mode)
 {
@@ -100,3 +108,27 @@ void MonitorWidget::stopLog()
     }
     isLogged=false;
 }
+
+void MonitorWidget::print()
+{
+    QPrinter printer(QPrinter::HighResolution);
+    QPrintDialog printDialog(&printer, this);
+    if (printDialog.exec() == QDialog::Accepted) {
+    DataDisplay *current=(DataDisplay *)displayTabs->currentWidget();
+    current->print(&printer);
+    qDebug()<<"printed";
+    }
+
+}
+void MonitorWidget::zoomIn()
+{
+    DataDisplay *current=(DataDisplay *)displayTabs->currentWidget();
+    current->zoomIn();
+}
+
+void MonitorWidget::zoomOut()
+{
+    DataDisplay *current=(DataDisplay *)displayTabs->currentWidget();
+    current->zoomOut();
+}
+
